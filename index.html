@@ -196,8 +196,12 @@
                   "\");'>Support us" +
                   '</a></div>';
 
-            } else if (k == 'business_name' || k == 'location' || k == 'social_media') {
+            } else if (k == 'business_name') {
               div.textContent = row[k];
+            } else if (k == 'location') {
+              div.textContent = row[k];
+              let support_username = (row['social_media'] || '').replace(/[@\s]/g, '');
+              div.innerHTML += "<br /><a href='https://instagram.com/" + support_username + "/' target='_blank'> " + row['social_media'] + " </a>";
             } else if (k == 'description') {
               let long_description_div = document.createElement('div');
               long_description_div.classname = `div_content_${k}`;
