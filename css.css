@@ -189,11 +189,11 @@ td {
     margin-right: 10px;
 }
 
-.gofundme_pill {
+.social_pill {
     margin: 20px 0px;
 }
 
-.gofundme_pill a {
+.social_pill a {
     text-decoration: none;
     background: rgb(0, 195, 103);
     border: 1px solid rgb(0, 195, 103);
@@ -204,7 +204,7 @@ td {
     color: white;
 }
 
-.gofundme_pill img {
+.social_pill img {
     margin-right: 10px;
 }
 
