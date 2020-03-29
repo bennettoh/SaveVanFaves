@@ -14,12 +14,9 @@ Ours asks for:
 
 - Business Name
 - Physical Business Address
-- Description of where the funds will go and why they're needed
-- What are 5 adjectives that describe your staff?
-- What's keeping you hopeful through this time?
-- Venmo Username (e.g. @JoePizzaHelpStaff)
-- GoFundMe Link
-- Verify that it's you by DM-ing your Venmo username to @bailoutnyc on Instagram or Twitter from your business account, or by posting publicly about bailout.nyc.
+
+
+- Verify that it's you by DM-ing your support username to @bailoutnyc on Instagram or Twitter from your business account, or by posting publicly about bailout.nyc.
 
 Get the **Share URL** for the form by clicking **Send** and the **Link** icon:
 
@@ -36,10 +33,9 @@ Put this in the **configuration** section of `index.html` as the value of `REGIS
 It **MUST** have the following columns, in this order:
 
 - `Business Name`
-- `Venmo Handle`
 - `Location`
 - `Description`
-- `GoFundMe URL`
+- `Website URL`
 
 Get the `id` portion of the URL from here:
 

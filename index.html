@@ -132,7 +132,7 @@
     const parseSheetResult = result => {
       let colMap = {
         '1': 'business_name',
-        '2': 'venmo_handle',
+        '2': 'support_handle',
         '3': 'location',
         '4': 'description',
         '5': 'gofundme_url',
@@ -172,14 +172,14 @@
         .map((row, i) => {
           let outer = document.createElement('div');
           outer.className = `place_pill`;
-          ['business_name', 'location', 'venmo_handle', 'description', 'gofundme_url'].map(k => {
+          ['business_name', 'location', 'support_handle', 'description', 'gofundme_url'].map(k => {
             let div = document.createElement('div');
             div.className = `div_content_${k}`;
             div.id = `business_${i}_${k}`;
 
-            //https://venmo.com/iqram?txn=pay&amount=0.01&note=Hii,%20I%20worked%20with%20John%20on%20Venmo,%20and%20he%20wants%20to%20hear%20your%20voice.%20Listen%20to%20this%20Ense%20he%20made:%20https://ense.nyc/ense/154602/violetredyellow
+            //https://support.com/iqram?txn=pay&amount=0.01&note=Hii,%20I%20worked%20with%20John%20on%20support,%20and%20he%20wants%20to%20hear%20your%20voice.%20Listen%20to%20this%20Ense%20he%20made:%20https://ense.nyc/ense/154602/violetredyellow
 
-            if (k == 'venmo_handle') {
+            if (k == 'support_handle') {
               if (row[k] == null && row['gofundme_url'] != null) {
                 //GofundMe
                 div.innerHTML =
@@ -192,21 +192,18 @@
                   "\");'><img src='./assets/gofundmelogo_transparent.png' width='86px;'/>" +
                   '</a></div>';
               } else {
-                let venmo_username = (row[k] || '').replace(/[@\s]/g, '');
-                //Venmo
-                let venmo_link =
-                  'https://venmo.com/' +
-                  row[k] +
-                  '?txn=pay&note=Support%20local%20service%20workers%20on%20http://bailout.nyc%20%E2%9D%A4%EF%B8%8F';
+                let support_username = (row[k] || '').replace(/[@\s]/g, '');
+                //support
+                let support_link = row[k];
                 div.innerHTML =
-                  "<div class='venmo_pill'><a target='_blank' href='" +
-                  venmo_link +
-                  '\' onClick=\'sendGAEvent("send", "event", "Venmo Buttons", "Clicked individual business", "' +
-                  venmo_username +
+                  "<div class='support_pill'><a target='_blank' href='" +
+                  support_link +
+                  '\' onClick=\'sendGAEvent("send", "event", "support Buttons", "Clicked individual business", "' +
+                  support_username +
                   '", "' +
                   i +
-                  "\");'><img src='./assets/venmo-transparent.png' width='25px;'/>Venmo @" +
-                  venmo_username +
+                  "\");'>Support" +
+                  // support_username +
                   '</a></div>';
               }
             } else if (k == 'business_name' || k == 'location') {
@@ -452,11 +449,11 @@
       font-size: 14px;
     }
 
-    .venmo_pill {
+    .support_pill {
       margin: 20px 0px;
     }
 
-    .venmo_pill a {
+    .support_pill a {
       text-decoration: none;
       background: #6696cc;
       border: 1px solid #6696cc;
@@ -467,7 +464,7 @@
       color: white;
     }
 
-    .venmo_pill img {
+    .support_pill img {
       margin-right: 10px;
     }
 
@@ -575,12 +572,12 @@
     </div>
 
     <!-- <div class="button-wrapper" style="margin-bottom:10px; text-align:left;">
-      <div class="venmo_pill">
+      <div class="support_pill">
         <a
           target="_blank"
-          href="https://venmo.com/bailoutnyc?txn=pay&note=Support%20nyc%20service%20workers%20on%20http://bailout.nyc%20%E2%9D%A4%EF%B8%8F"
-          onClick="sendGAEvent('send', 'event', 'Venmo Buttons', 'bailoutnyc main button', '0', '0')"
-          ><img src="./assets/venmo-transparent.png" width="25px;" />Venmo @bailoutnyc</a
+          href="https://support.com/bailoutnyc?txn=pay&note=Support%20nyc%20service%20workers%20on%20http://bailout.nyc%20%E2%9D%A4%EF%B8%8F"
+          onClick="sendGAEvent('send', 'event', 'support Buttons', 'bailoutnyc main button', '0', '0')"
+          ><img src="./assets/support-transparent.png" width="25px;" />support @bailoutnyc</a
         >
       </div>
     </div> -->
@@ -692,7 +689,7 @@
         <h3 class="f4 measure-narrow mt0">
           <a name="random"></a>Anyone can use help
         </h3>
-        <div class="div_content_venmo_handle">
+        <div class="div_content_support_handle">
           <div class="lucky_pill">
             <a onClick="randomlyChooseBusiness(); sendGAEvent('send', 'event', 'Randomizer', 'Clicked random business generator', '0', '0');" href="#random">
               Randomly choose a business
