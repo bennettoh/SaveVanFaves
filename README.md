@@ -1,8 +1,8 @@
 # Forked from bailout.nyc
 
-When we began working on this project to help provide financial relief to service workers, one of our **KEY REQUIREMENTS** was to build something *QUICKLY*.
+Originally designed to help provide financial relief to service workers. We are putting out own spin on it to support local restaurants in our area.
 
-Below is a rough description of how we built bailout.nyc. Please feel free to clone this project to create your own version to support your local community.
+Below is a rough description of how bailout.nyc was built. Please feel free to clone this project to create your own version to support your local community.
 
 ## 1. Fork this repo on github
 
@@ -14,8 +14,6 @@ Ours asks for:
 
 - Business Name
 - Physical Business Address
-
-
 - Verify that it's you by DM-ing your support username to @bailoutnyc on Instagram or Twitter from your business account, or by posting publicly about bailout.nyc.
 
 Get the **Share URL** for the form by clicking **Send** and the **Link** icon:

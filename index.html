@@ -214,7 +214,8 @@
               long_description_div.id = `business_${i}_long_description`;
 
               var description = row[k];
-              div.innerHTML = "<img src='" + description + "'>";
+              div.innerHTML = description;
+              // div.innerHTML = "<img src='" + description + "'>";
               
               // var shortened_description = description.substring(0, 120);
               // if (description.length > 120) {
@@ -237,22 +238,24 @@
           });
         });
     };
-    const searchFilter = () => {
-      const searchInput = document.getElementById('search');
-      const q = (searchInput.value || '').trim();
-      if (q == '') {
-        drawTable(SHEET);
-        return true;
-      }
-      const terms = q.split(/\s/).map(w => w.trim().toLowerCase());
-      const results = SHEET.filter(row => {
-        let words = row.business_name.split(/\s/).map(w => w.trim().toLowerCase());
-        // every term much match the head of some word in the business name
-        return terms.every(t => words.some(w => w.indexOf(t) == 0));
-      });
-      drawTable(results);
-      return true;
-    };
+    
+    // const searchFilter = () => {
+    //   const searchInput = document.getElementById('search');
+    //   const q = (searchInput.value || '').trim();
+    //   if (q == '') {
+    //     drawTable(SHEET);
+    //     return true;
+    //   }
+    //   const terms = q.split(/\s/).map(w => w.trim().toLowerCase());
+    //   const results = SHEET.filter(row => {
+    //     let words = row.business_name.split(/\s/).map(w => w.trim().toLowerCase());
+    //     // every term must match the head of some word in the business name
+    //     return terms.every(t => words.some(w => w.indexOf(t) == 0));
+    //   });
+    //   drawTable(results);
+    //   return true;
+    // };
+
     const onBodyLoad = () => {
       $.ajax(JSON_URL).done(function(result) {
         SHEET = parseSheetResult(result);
@@ -595,20 +598,10 @@
         <br />
         <br />
         <h3 class="f4 measure-narrow mt0">
-          3 weeks can kill a business
+          Small businesses have shorter runways
         </h3>
-        Restaurants have tons of fixed costs: rent, labor, loan repayments, insurance, supplies, repairs – the list goes on. Even successful restaurants have razor thin margins of 3-5%, and a third have struggled to pay employees at least once. The “shelter-in-place” ordinance keeping customers at home could tip the balance into bankruptcy.
-        <br />
-        <br />
-        <br />
-        <h3 class="f4 measure-narrow mt0">
-        Our duty as loyal customers
-        </h3>
-        Our small businesses need us more than ever. Even though we can’t leave home, we can still support local restaurants by buying gift cards. It’s basically a mini-loan, so buy one now and make a plan to use it later.
-        <br />
-        <br />
-        If you'd like to support the staff of a particular business, you can also find them below
-        and contribute to them directly.
+        Our small businesses need us more than ever. Restaurants have tons of fixed costs: rent, labor, loan repayments, insurance, supplies, repairs – the list goes on. Even successful restaurants have thin margins of 3-5%, and a third have struggled to pay employees at least once.
+
         <!-- <br />
         <div id="tell_me_more_header">
           <a
