@@ -214,21 +214,22 @@
               long_description_div.id = `business_${i}_long_description`;
 
               var description = row[k];
+              div.innerHTML = "<img src='" + description + "'>";
+              
+              // var shortened_description = description.substring(0, 120);
+              // if (description.length > 120) {
+              //   shortened_description =
+              //     shortened_description +
+              //     `... <a href='' onClick='showFullDescription(${i}); sendGAEvent("send", "event", "businesses", "Clicked see more", "0", "0"); return false;'> show more</a>`;
+              //   description =
+              //     description +
+              //     ` <a href='' onClick='showShortenedDescription(${i}); return false;'> show less</a>`;
+              // }
+              // div.innerHTML = shortened_description;
 
-              var shortened_description = description.substring(0, 120);
-              if (description.length > 120) {
-                shortened_description =
-                  shortened_description +
-                  `... <a href='' onClick='showFullDescription(${i}); sendGAEvent("send", "event", "businesses", "Clicked see more", "0", "0"); return false;'> show more</a>`;
-                description =
-                  description +
-                  ` <a href='' onClick='showShortenedDescription(${i}); return false;'> show less</a>`;
-              }
-              div.innerHTML = shortened_description;
-
-              long_description_div.innerHTML = description;
-              long_description_div.style.display = 'none';
-              outer.appendChild(long_description_div);
+              // long_description_div.innerHTML = description;
+              // long_description_div.style.display = 'none';
+              // outer.appendChild(long_description_div);
             }
 
             outer.appendChild(div);
@@ -585,7 +586,7 @@
     <div class="fl w-100 pa2">
       <div class="bg-white br1 pa3" style="border-radius:4px;">
         <h3 class="f4 measure-narrow mt0">
-          Gift cards help "flatten the curve" of lost income from COVID-19
+          Gift cards, takeout, and delivery help "flatten the curve" of lost income from COVID-19
         </h3>
         Pay forward by purchasing giftcards you can use once everything is back to normal. In the meantime, your support will keep them open until then!
         <br />
