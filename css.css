@@ -246,8 +246,6 @@ ol li:before {
 
 @media only screen and (min-width: 768px) {
     #sheet {
-        display: grid;
         grid-template-columns: repeat(2, 1fr);
-        grid-gap: 15px;
     }
 }
