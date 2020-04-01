@@ -181,9 +181,9 @@
 
             if (k == 'webaddress') {
                 div.innerHTML +=
-                  "<br /><img src='" +
+                  "<br /><img id='preview' src='" +
                   row['image_url'] +
-                  "' width='100%' height='150px' style='object-fit:cover'>";
+                  "' width='100%' style='object-fit:cover'>";
                 let support_username = (row[k] || '').replace(/[@\s]/g, '');
                 
                 let support_link = row[k];

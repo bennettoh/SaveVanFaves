@@ -151,6 +151,10 @@ td {
     width: 400px;
 }
 
+#preview {
+    height: 250px
+}
+
 .place_pill {
     padding: 15px;
     background: #fff;
@@ -247,5 +251,9 @@ ol li:before {
 @media only screen and (min-width: 768px) {
     #sheet {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    #preview {
+        height: 200px
     }
 }
