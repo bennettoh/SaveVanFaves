@@ -174,7 +174,7 @@
         .map((row, i) => {
           let outer = document.createElement('div');
           outer.className = `place_pill`;
-          ['business_name', 'location', 'webaddress', 'description', 'social_media'].map(k => {
+          ['business_name', 'location', 'webaddress', 'description', 'social_media', 'image_url', 'neighbourhood'].map(k => {
             let div = document.createElement('div');
             div.className = `div_content_${k}`;
             div.id = `business_${i}_${k}`;
@@ -252,12 +252,12 @@
     };
 
     const neighbourhoodFilter = () => {
-      var neighbourhood = document.getElementById('neighbourhood');
-      const results = SHEET.filter(row => {
-        if(neighbourhood == row.neighbourhood){
-          return neighbourhood;
-        };
-      });
+      var neighbourhoodElement = document.getElementById('neighbourhood');
+      if (neighbourhoodElement.value == 'All'){
+        drawTable(SHEET);
+        return true;
+      }
+      const results = SHEET.filter(row => row.neighbourhood == neighbourhoodElement.value);
       drawTable(results);
       return true;
     }
@@ -470,15 +470,15 @@
 
     <div class="fl w-100 pt10 pa2">
       <a name="businesses"></a>
-<!-- 
-      <label for="neighbourhood">Filter by neighbourhood:</label>
-      <select id="neighbourhood">
-        <option value="all">All</option>
-        <option value="downtown">Downtown</option>
-        <option value="strathcona">Strathcona</option>
-        <option value="kitsilano">Kitsilano</option>
-        <option value="riley park">Riley Park</option>
-      </select> -->
+
+      <label>Filter by neighbourhood:</label>
+      <select id="neighbourhood" onchange="neighbourhoodFilter();">
+        <option value="All">All</option>
+        <option value="Downtown">Downtown</option>
+        <option value="Strathcona">Strathcona</option>
+        <option value="Kitsilano">Kitsilano</option>
+        <option value="Riley Park">Riley Park</option>
+      </select>
 
       <div id="business_flex">
         <div id="search_icon" class="flex_item">
