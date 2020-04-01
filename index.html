@@ -137,6 +137,7 @@
         '4': 'description',
         '5': 'social_media',
         '6': 'image_url',
+        '7': 'neighbourhood',
       };
       var rows = [];
       result.feed.entry.map(e => {
@@ -233,22 +234,33 @@
         });
     };
     
-    // const searchFilter = () => {
-    //   const searchInput = document.getElementById('search');
-    //   const q = (searchInput.value || '').trim();
-    //   if (q == '') {
-    //     drawTable(SHEET);
-    //     return true;
-    //   }
-    //   const terms = q.split(/\s/).map(w => w.trim().toLowerCase());
-    //   const results = SHEET.filter(row => {
-    //     let words = row.business_name.split(/\s/).map(w => w.trim().toLowerCase());
-    //     // every term must match the head of some word in the business name
-    //     return terms.every(t => words.some(w => w.indexOf(t) == 0));
-    //   });
-    //   drawTable(results);
-    //   return true;
-    // };
+    const searchFilter = () => {
+      const searchInput = document.getElementById('search');
+      const q = (searchInput.value || '').trim();
+      if (q == '') {
+        drawTable(SHEET);
+        return true;
+      }
+      const terms = q.split(/\s/).map(w => w.trim().toLowerCase());
+      const results = SHEET.filter(row => {
+        let words = row.business_name.split(/\s/).map(w => w.trim().toLowerCase());
+        // every term must match the head of some word in the business name
+        return terms.every(t => words.some(w => w.indexOf(t) == 0));
+      });
+      drawTable(results);
+      return true;
+    };
+
+    const neighbourhoodFilter = () => {
+      var neighbourhood = document.getElementById('neighbourhood');
+      const results = SHEET.filter(row => {
+        if(neighbourhood == row.neighbourhood){
+          return neighbourhood;
+        };
+      });
+      drawTable(results);
+      return true;
+    }
 
     const onBodyLoad = () => {
       $.ajax(JSON_URL).done(function(result) {
@@ -257,11 +269,11 @@
       });
     };
 
-    const randomlyChooseBusiness = () => {
-      var random_business_index = Math.floor((Math.random() * number_of_businesses) + 1);
-      document.getElementById("search").value = businesses[random_business_index]['business_name'];
-      searchFilter();
-    }
+    // const randomlyChooseBusiness = () => {
+    //   var random_business_index = Math.floor((Math.random() * number_of_businesses) + 1);
+    //   document.getElementById("search").value = businesses[random_business_index]['business_name'];
+    //   searchFilter();
+    // }
 
   </script>
 
@@ -458,6 +470,16 @@
 
     <div class="fl w-100 pt10 pa2">
       <a name="businesses"></a>
+<!-- 
+      <label for="neighbourhood">Filter by neighbourhood:</label>
+      <select id="neighbourhood">
+        <option value="all">All</option>
+        <option value="downtown">Downtown</option>
+        <option value="strathcona">Strathcona</option>
+        <option value="kitsilano">Kitsilano</option>
+        <option value="riley park">Riley Park</option>
+      </select> -->
+
       <div id="business_flex">
         <div id="search_icon" class="flex_item">
           <i class="material-icons">search</i>
