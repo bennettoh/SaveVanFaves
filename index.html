@@ -11,321 +11,39 @@
   </script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js"></script>
-  <script>
-    /****************************************/
-    /* google analytics */
-    /****************************************/
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag('js', new Date());
-    gtag('config', GOOGLE_ANALYTICS_ID);
-
-    /****************************************/
-    /* full story */
-    /****************************************/
-    window['_fs_debug'] = false;
-    window['_fs_host'] = 'fullstory.com';
-    window['_fs_script'] = 'edge.fullstory.com/s/fs.js';
-    window['_fs_org'] = FULL_STORY_ORG;
-    window['_fs_namespace'] = FULL_STORY_NAMESPACE;
-    (function(m, n, e, t, l, o, g, y) {
-      if (e in m) {
-        if (m.console && m.console.log) {
-          m.console.log('FullStory namespace conflict. Please set window["_fs_namespace"].');
-        }
-        return;
-      }
-      g = m[e] = function(a, b, s) {
-        g.q ? g.q.push([a, b, s]) : g._api(a, b, s);
-      };
-      g.q = [];
-      o = n.createElement(t);
-      o.async = 1;
-      o.crossOrigin = 'anonymous';
-      o.src = 'https://' + _fs_script;
-      y = n.getElementsByTagName(t)[0];
-      y.parentNode.insertBefore(o, y);
-      g.identify = function(i, v, s) {
-        g(l, { uid: i }, s);
-        if (v) g(l, v, s);
-      };
-      g.setUserVars = function(v, s) {
-        g(l, v, s);
-      };
-      g.event = function(i, v, s) {
-        g('event', { n: i, p: v }, s);
-      };
-      g.anonymize = function() {
-        g.identify(!!0);
-      };
-      g.shutdown = function() {
-        g('rec', !1);
-      };
-      g.restart = function() {
-        g('rec', !0);
-      };
-      g.log = function(a, b) {
-        g('log', [a, b]);
-      };
-      g.consent = function(a) {
-        g('consent', !arguments.length || a);
-      };
-      g.identifyAccount = function(i, v) {
-        o = 'account';
-        v = v || {};
-        v.acctId = i;
-        g(o, v);
-      };
-      g.clearUserCookie = function() {};
-      g._w = {};
-      y = 'XMLHttpRequest';
-      g._w[y] = m[y];
-      y = 'fetch';
-      g._w[y] = m[y];
-      if (m[y])
-        m[y] = function() {
-          return g._w[y].apply(this, arguments);
-        };
-      g._v = '1.2.0';
-    })(window, document, window['_fs_namespace'], 'script', 'user');
-
-    /****************************************/
-    /* site scripts */
-    /****************************************/
-    var SHEET = [];
-    var JSON_URL = `https://spreadsheets.google.com/feeds/cells/${SPREADSHEET_ID}/1/public/full?alt=json`;
-
-    const showTellMeMore = () => {
-      var x = document.getElementById('tell_me_more');
-      var y = document.getElementById('tell_me_more_header');
-      if (x.style.display === 'none') {
-        x.style.display = 'block';
-        y.innerHTML = '<h3>Tell Me More</h3>';
-      } else {
-        x.style.display = 'none';
-      }
-    };
-
-    const showFullDescription = row_number => {
-      document.getElementById(`business_${row_number}_long_description`).style.display = 'block';
-      document.getElementById(`business_${row_number}_description`).style.display = 'none';
-    };
-
-    const showShortenedDescription = row_number => {
-      document.getElementById(`business_${row_number}_long_description`).style.display = 'none';
-      document.getElementById(`business_${row_number}_description`).style.display = 'block';
-    };
-
-    const sendGAEvent = (send, type, event_category, event_action, event_label, event_value) => {
-      if (type == 'event') {
-        gtag('event', event_action, {
-          event_category: event_category,
-          event_label: event_label,
-          value: event_value,
-        });
-      }
-    };
-    var businesses;
-    var number_of_businesses;
-    const parseSheetResult = result => {
-      let colMap = {
-        '1': 'business_name',
-        '2': 'webaddress',
-        '3': 'location',
-        '4': 'description',
-        '5': 'social_media',
-        '6': 'image_url',
-        '7': 'neighbourhood',
-      };
-      var rows = [];
-      result.feed.entry.map(e => {
-        let rowNum = parseInt(e['gs$cell'].row, 10);
-        while (rows.length < rowNum) {
-          rows.push({});
-        }
-        let rowIndex = rowNum - 1;
-        let colNum = e['gs$cell'].col;
-        let key = colMap[colNum];
-        let cellValue = e['gs$cell']['$t'];
-        rows[rowIndex][key] = cellValue;
-      });
-      businesses = rows;
-      number_of_businesses = rows.length;
-      return rows;
-    };
-
-    const drawTable = sheet => {
-      let t = document.getElementById('sheet');
-      t.innerHTML = '';
-
-      sheet
-        .filter(row => row.business_name != 'Business Name' && !!row.business_name)
-        .sort((a, b) => {
-          if (a.business_name.toLowerCase() < b.business_name.toLowerCase()) {
-            return -1;
-          }
-          if (a.business_name.toLowerCase() > b.business_name.toLowerCase()) {
-            return 1;
-          }
-          return 0;
-        })
-        .map((row, i) => {
-          let outer = document.createElement('div');
-          outer.className = `place_pill`;
-          ['business_name', 'location', 'webaddress', 'description', 'social_media', 'image_url', 'neighbourhood'].map(k => {
-            let div = document.createElement('div');
-            div.className = `div_content_${k}`;
-            div.id = `business_${i}_${k}`;
-
-            if (k == 'webaddress') {
-                div.innerHTML +=
-                  "<br /><img id='preview' src='" +
-                  row['image_url'] +
-                  "' width='100%' style='object-fit:cover'>";
-                let support_username = (row[k] || '').replace(/[@\s]/g, '');
-                
-                let support_link = row[k];
-                div.innerHTML +=
-                  "<div class='support_pill'><a target='_blank' href='" +
-                  support_link +
-                  '\' onClick=\'sendGAEvent("send", "event", "support Buttons", "Clicked individual business", "' +
-                  support_username +
-                  '", "' +
-                  i +
-                  "\");'>Support us" +
-                  '</a></div>';
-
-            } else if (k == 'business_name') {
-              div.textContent = row[k];
-            } else if (k == 'location') {
-              div.textContent = row[k];
-              let support_username = (row['social_media'] || '').replace(/[@\s]/g, '');
-              div.innerHTML += "<br /><a href='https://instagram.com/" + support_username + "/' target='_blank'> " + row['social_media'] + " </a>";
-            } else if (k == 'description') {
-              let long_description_div = document.createElement('div');
-              long_description_div.classname = `div_content_${k}`;
-              long_description_div.id = `business_${i}_long_description`;
-
-              var description = row[k];
-              div.innerHTML = description;
-              // div.innerHTML = "<img src='" + description + "'>";
-              
-              // var shortened_description = description.substring(0, 120);
-              // if (description.length > 120) {
-              //   shortened_description =
-              //     shortened_description +
-              //     `... <a href='' onClick='showFullDescription(${i}); sendGAEvent("send", "event", "businesses", "Clicked see more", "0", "0"); return false;'> show more</a>`;
-              //   description =
-              //     description +
-              //     ` <a href='' onClick='showShortenedDescription(${i}); return false;'> show less</a>`;
-              // }
-              // div.innerHTML = shortened_description;
-
-              // long_description_div.innerHTML = description;
-              // long_description_div.style.display = 'none';
-              // outer.appendChild(long_description_div);
-            }
-
-            outer.appendChild(div);
-            t.appendChild(outer);
-          });
-        });
-    };
-    
-    const searchFilter = () => {
-      const searchInput = document.getElementById('search');
-      const q = (searchInput.value || '').trim();
-      if (q == '') {
-        drawTable(SHEET);
-        return true;
-      }
-      const terms = q.split(/\s/).map(w => w.trim().toLowerCase());
-      const results = SHEET.filter(row => {
-        let words = row.business_name.split(/\s/).map(w => w.trim().toLowerCase());
-        // every term must match the head of some word in the business name
-        return terms.every(t => words.some(w => w.indexOf(t) == 0));
-      });
-      drawTable(results);
-      return true;
-    };
-
-    const neighbourhoodFilter = () => {
-      var neighbourhoodElement = document.getElementById('neighbourhood');
-      if (neighbourhoodElement.value == 'All'){
-        drawTable(SHEET);
-        return true;
-      }
-      const results = SHEET.filter(row => row.neighbourhood == neighbourhoodElement.value);
-      drawTable(results);
-      return true;
-    }
-
-    const onBodyLoad = () => {
-      $.ajax(JSON_URL).done(function(result) {
-        SHEET = parseSheetResult(result);
-        drawTable(SHEET);
-      });
-    };
-
-    // const randomlyChooseBusiness = () => {
-    //   var random_business_index = Math.floor((Math.random() * number_of_businesses) + 1);
-    //   document.getElementById("search").value = businesses[random_business_index]['business_name'];
-    //   searchFilter();
-    // }
-
-  </script>
+  <script src="./index.js"></script>
 
   <title>SaveVanFaves</title>
   <meta property="og:image" content="./assets/bailoutlogo.png" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="http://SaveVanFaves.com" />
   <meta property="og:title" content="SaveVanFaves.com" />
-  <meta property="og:description" content="SaveVanFaves is a citizen-organized fund to help provide financial relief for service workers whose businesses have closed in response to covid-19." />
+  <meta property="og:description"
+    content="SaveVanFaves is a citizen-organized fund to help provide financial relief for service workers whose businesses have closed in response to covid-19." />
   <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link
-    rel="icon"
-    href="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/heavy-black-heart_2764.png"
-  />
+  <link rel="icon"
+    href="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/apple/237/heavy-black-heart_2764.png" />
   <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css" />
   <link rel="stylesheet" type="text/css" href="style.css">
-  
+
 </head>
 
 <body onload="onBodyLoad();">
   <a name="home"></a>
   <div class="nav nav-top center mw7">
-    <a
-        href="#home"
-        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked home', 'From bottom', '0')"
-        >Home</a
-      >
-      <a
-        href="#businesses"
-        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked businesses', 'From bottom', '0')"
-        >Businesses</a
-      >
-      <a
-        target="_blank"
-        href="http://instagram.com/savevanfaves"
-        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked Instagram', 'From bottom', '0')"
-        >Instagram</a
-      >
-      <a
-        href="#about-us"
-        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked whos behind this', 'From bottom', '0')"
-        >About Us</a
-      >
-      <a
-        target="_blank"
-        href="https://github.com/bennettoh/SaveVanFaves"
-        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked Github', 'From bottom', '0')"
-        >Github</a
-      >
+    <a href="#home" onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked home', 'From bottom', '0')">Home</a>
+    <a href="#businesses"
+      onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked businesses', 'From bottom', '0')">Businesses</a>
+    <a target="_blank" href="http://instagram.com/savevanfaves"
+      onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked Instagram', 'From bottom', '0')">Instagram</a>
+    <a href="#about-us"
+      onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked whos behind this', 'From bottom', '0')">About
+      Us</a>
+    <a target="_blank" href="https://github.com/bennettoh/SaveVanFaves"
+      onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked Github', 'From bottom', '0')">Github</a>
   </div>
 
   <div class="mw7 ph4 center">
@@ -342,130 +60,45 @@
       </h1>
     </div>
 
-    <!-- <div class="button-wrapper" style="margin-bottom:10px; text-align:left;">
-      <div class="support_pill">
-        <a
-          target="_blank"
-          href="https://support.com/bailoutnyc?txn=pay&note=Support%20nyc%20service%20workers%20on%20http://bailout.nyc%20%E2%9D%A4%EF%B8%8F"
-          onClick="sendGAEvent('send', 'event', 'support Buttons', 'bailoutnyc main button', '0', '0')"
-          ><img src="./assets/support-transparent.png" width="25px;" />support @bailoutnyc</a
-        >
-      </div>
-    </div> -->
-
     <div class="fl w-100 pa2">
       <div class="bg-white br1 pa3" style="border-radius:4px;">
         <h3 class="f4 measure-narrow mt0">
           Small businesses have shorter runways
         </h3>
-        Our small businesses need us more than ever. Restaurants have tons of fixed costs: rent, labor, loan repayments, insurance, supplies, repairs – the list goes on. Even successful restaurants have thin margins of 3-5%, and a third have struggled to pay employees at least once.
+        Our small businesses need us more than ever. Restaurants have tons of fixed costs: rent, labor, loan repayments,
+        insurance, supplies, repairs – the list goes on. Even successful restaurants have thin margins of 3-5%, and a
+        third have struggled to pay employees at least once.
         <br />
         <br />
         <br />
         <h3 class="f4 measure-narrow mt0">
           There are many ways we can support them
         </h3>
-        <b>Takeout/pickup</b> - Many restaurants are still operational. The only difference is the the lack of dine-in option.<br /><br />
-        <b>Delivery</b> - If you want to isolate yourself further, you can choose delivery option available in some of the vendors.<br /><br />
-        <b>Gift cards</b> - This is probably the safest option. Pay forward by purchasing giftcards you can use once everything is back to normal.
+        <b>Takeout/pickup</b> - Many restaurants are still operational. The only difference is the the lack of dine-in
+        option.<br /><br />
+        <b>Delivery</b> - If you want to isolate yourself further, you can choose delivery option available in some of
+        the vendors.<br /><br />
+        <b>Gift cards</b> - This is probably the safest option. Pay forward by purchasing giftcards you can use once
+        everything is back to normal.
         <br /><br />
         See the list below for businesses near you!
 
-        <!-- <br />
-        <div id="tell_me_more_header">
-          <a
-            href=""
-            onClick="showTellMeMore(); sendGAEvent('send', 'event', 'Tell me more', 'Clicked tell me more', '0', '0'); return false;"
-            >Tell me more...</a
-          >
-        </div> -->
-        <!-- <div id="tell_me_more" style="display:none">
-          <p>
-            In order to slow the spread of the coronavirus, the local government is
-            <a
-              target="_blank"
-              href="https://www1.nyc.gov/site/doh/health/health-topics/coronavirus.page"
-              >advising</a
-            >
-            restaurants, bars, cafes, nightclubs, movie theaters, small theater houses, and concert
-            venues to close. Elsewhere closures are even more comprehensive.
-          </p>
-          <p>
-            While this is prudent from a public health perspective, these closures will have a real
-            and immediate economic impact to service workers across industries. It could mean missed
-            rent or inability to pay for basic needs for many.
-          </p>
-          <p>
-            The city recognizes the economic stress this will put on service workers, and, in order
-            to incentivize businesses to keep employees on payroll, the administration has announced
-            that "businesses with fewer than 100 employees could be eligible for an interest-free
-            loan up to $75,000 as long as they can document a 25% loss in customer receipts because
-            of the coronavirus."
-          </p>
-          <p>
-            While an interest free loan is a good place to start, we believe we can do more to help
-            those affected, and are raising funds to be distributed to all the businesses affected
-            by this public health crisis.
-          </p>
-          <p>
-            The economic impacts of the coronavirus will be comparable to a very severe recession --
-            some economists estimate direct output loss of 30% for a fiscal quarter, which would
-            equate to an annual GDP loss of 7.5%.
-          </p>
-          <p>
-            Hopefully, we can anticipate the second order consequences of the coronavirus and
-            proactively work to mitigate them more swiftly than we have addressed the public health
-            concerns.
-          </p>
-          <p>
-            We cannot all be working alongside all of the heroic healthcare workers testing and
-            treating coronavirus patients, but our goal with this project is to enable every citizen
-            to do something today to mitigate the economic impact suffered by a huge number of
-            service workers.
-          </p>
-        </div> -->
-
         <br />
       </div>
-      <div
-        class="bg-white br1 pa3"
-        style="border-radius:4px; margin-top:20px; margin-bottom: 15px;"
-      >
+      <div class="bg-white br1 pa3" style="border-radius:4px; margin-top:20px; margin-bottom: 15px;">
         <h3 class="f4 measure-narrow mt0">
           Don't see your faves?
         </h3>
         Tell your favorite local businesses to register on <b>SaveVanFaves.com</b> so we can all support their
         staff.<br /><br />
         If you own or operate a business affected by Covid-19,
-        <a
-          id="register_business_link"
-          style="font-weight:900;"
-          target="_blank"
-          href=""
-          onClick="sendGAEvent('send', 'event', 'Businesses', 'Clicked form link', '0', '0')"
-          >fill out this form</a
-        >
+        <a id="register_business_link" style="font-weight:900;" target="_blank" href=""
+          onClick="sendGAEvent('send', 'event', 'Businesses', 'Clicked form link', '0', '0')">fill out this form</a>
         to register your business for listing.
         <script>
           document.getElementById('register_business_link').href = REGISTER_FORM_URL;
         </script>
       </div>
-
-
-      <!-- <div class="bg-white br1 pa3" style="border-radius:4px;">
-        <h3 class="f4 measure-narrow mt0">
-          <a name="random"></a>Anyone can use help
-        </h3>
-        <div class="div_content_webaddress">
-          <div class="lucky_pill">
-            <a onClick="randomlyChooseBusiness(); sendGAEvent('send', 'event', 'Randomizer', 'Clicked random business generator', '0', '0');" href="#random">
-              Randomly choose a business
-            </a>
-          </div>
-        </div>
-        <div>Use this button to randomly choose a business to contribute to.</div>
-      </div> -->
-
     </div>
 
     <div class="fl w-100 pt10 pa2">
@@ -485,14 +118,8 @@
         <div id="search_icon" class="flex_item">
           <i class="material-icons">search</i>
         </div>
-        <input
-          autocomplete="off"
-          id="search"
-          class="flex_item"
-          type="text"
-          placeholder="Search businesses..."
-          onkeyup="searchFilter();"
-        />
+        <input autocomplete="off" id="search" class="flex_item" type="text" placeholder="Search businesses..."
+          onkeyup="searchFilter();" />
       </div>
       <div id="sheet" style="margin-bottom:15px;"></div>
     </div>
@@ -500,10 +127,11 @@
     <div style="text-align:center;">
       <a name="about-us" style="font-size:16px; color:inherit;">About Us</a>
       <div
-        style="font-size:12px; margin-top:12px; margin-bottom:25px; margin-left:10px; margin-right:10px; text-align: center;"
-      >
+        style="font-size:12px; margin-top:12px; margin-bottom:25px; margin-left:10px; margin-right:10px; text-align: center;">
         <div style="max-width:410px; margin:0 auto;">
-          We are local foodies in Vancouver who love exploring new restaurants. We are heartbroken to hear that the pandemic threatens the livelihoods of some of our favorite vendors. Together we can save our local businesses and enjoy the great food scene we have here in Vancouver!
+          We are local foodies in Vancouver who love exploring new restaurants. We are heartbroken to hear that the
+          pandemic threatens the livelihoods of some of our favorite vendors. Together we can save our local businesses
+          and enjoy the great food scene we have here in Vancouver!
         </div>
         <br />
         ❤️<br />
@@ -511,38 +139,19 @@
       </div>
     </div>
     <div class="nav nav-bottom center mw7">
-      <a
-        href="#home"
-        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked home', 'From bottom', '0')"
-        >Home</a
-      >
-      <a
-        href="#businesses"
-        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked businesses', 'From bottom', '0')"
-        >Businesses</a
-      >
-      <a
-        target="_blank"
-        href="http://instagram.com/savevanfaves"
-        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked Instagram', 'From bottom', '0')"
-        >Instagram</a
-      >
-      <a
-        href="#about-us"
-        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked whos behind this', 'From bottom', '0')"
-        >About Us</a
-      >
-      <a
-        target="_blank"
-        href="https://github.com/bennettoh/SaveVanFaves"
-        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked Github', 'From bottom', '0')"
-        >Github</a
-      >
+      <a href="#home"
+        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked home', 'From bottom', '0')">Home</a>
+      <a href="#businesses"
+        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked businesses', 'From bottom', '0')">Businesses</a>
+      <a target="_blank" href="http://instagram.com/savevanfaves"
+        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked Instagram', 'From bottom', '0')">Instagram</a>
+      <a href="#about-us"
+        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked whos behind this', 'From bottom', '0')">About
+        Us</a>
+      <a target="_blank" href="https://github.com/bennettoh/SaveVanFaves"
+        onClick="sendGAEvent('send', 'event', 'Header Links', 'Clicked Github', 'From bottom', '0')">Github</a>
     </div>
   </div>
 
-  <script
-    type="text/javascript"
-    src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"
-  ></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 </body>
